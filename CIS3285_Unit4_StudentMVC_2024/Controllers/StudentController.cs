@@ -1,4 +1,4 @@
-﻿using CIS3285_Unit4_StudentMVC_2024.Models;
+using CIS3285_Unit4_StudentMVC_2024.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,12 +6,12 @@ namespace CIS3285_Unit4_StudentMVC_2024.Controllers
 {
     public class StudentController : Controller
     {
-        // Our link to the list of students in the Models folder
-        IStudentCRUDInterface studentRepo = new StudentRepository();
-        
+        // Depend on the CRUD interface instead of the concrete repository type.
+        private readonly IStudentCRUDInterface studentRepo;
+
         public StudentController()
         {
-            // we are not currently using this constructor 
+            studentRepo = new StudentRepository();
         }
 
         // GET: StudentController
@@ -29,7 +29,6 @@ namespace CIS3285_Unit4_StudentMVC_2024.Controllers
         // GET: StudentController/Create
         public ActionResult Create()
         {
-            // This display the initial view when creating a student
             return View();
         }
 
@@ -38,15 +37,15 @@ namespace CIS3285_Unit4_StudentMVC_2024.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(IFormCollection collection)
         {
-            // This is run after the user clicks the Create button
-            // The collection is a map that contains the data fields
             try
             {
-                IStudentInterface newStudent = new StudentModel();
-                // Retrieve form data using form collection
-                newStudent.Id = Int32.Parse(collection["Id"]);
-                newStudent.Name = collection["Name"];
-                newStudent.Credits = Int32.Parse(collection["Credits"]);
+                IStudentInterface newStudent = new StudentModel
+                {
+                    Id = Int32.Parse(collection["Id"]),
+                    Name = collection["Name"].ToString(),
+                    Credits = Int32.Parse(collection["Credits"])
+                };
+
                 studentRepo.AddStudent(newStudent);
                 return RedirectToAction(nameof(Index));
             }
@@ -59,8 +58,6 @@ namespace CIS3285_Unit4_StudentMVC_2024.Controllers
         // GET: StudentController/Edit/5
         public ActionResult Edit(int id)
         {
-            // This displays the edit view when it is first openned
-            // The student that matches the id parameter must be passed to the view
             return View("Edit", studentRepo.getStudentById(id));
         }
 
@@ -69,17 +66,16 @@ namespace CIS3285_Unit4_StudentMVC_2024.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
         {
-            // This is run after the user edits a student
-            // The collection is a map that contains the data fields from the view
             try
             {
-                IStudentInterface updatedStudent = new StudentModel();
-                // Retrieve form data using form collection
-                updatedStudent.Id = id;
-                updatedStudent.Name = collection["Name"];
-                updatedStudent.Credits = Int32.Parse(collection["Credits"]);
-                studentRepo.UpdateStudent(id, updatedStudent);
+                IStudentInterface updatedStudent = new StudentModel
+                {
+                    Id = id,
+                    Name = collection["Name"].ToString(),
+                    Credits = Int32.Parse(collection["Credits"])
+                };
 
+                studentRepo.UpdateStudent(id, updatedStudent);
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -91,16 +87,8 @@ namespace CIS3285_Unit4_StudentMVC_2024.Controllers
         // GET: StudentController/Delete/5
         public ActionResult Delete(int id)
         {
-            try
-            {
-                studentRepo.DeleteStudent(id);
-                return RedirectToAction(nameof(Index));
-                //return View("Delete", studentRepo.getStudentById(id));
-            }
-            catch
-            {
-                return RedirectToAction(nameof(Index));
-            }
+            studentRepo.DeleteStudent(id);
+            return RedirectToAction(nameof(Index));
         }
 
         // POST: StudentController/Delete/5
@@ -108,15 +96,8 @@ namespace CIS3285_Unit4_StudentMVC_2024.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)
         {
-            try
-            {
-                //studentRepo.DeleteStudent(id);
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            studentRepo.DeleteStudent(id);
+            return RedirectToAction(nameof(Index));
         }
     }
 }

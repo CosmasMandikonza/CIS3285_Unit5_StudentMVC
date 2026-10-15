@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace CIS3285_Unit4_StudentMVC_2024.Models
 {
@@ -6,7 +6,9 @@ namespace CIS3285_Unit4_StudentMVC_2024.Models
     {
         [Key]
         public int Id { get; set; }
+
         public string Name { get; set; }
+
         public int Credits { get; set; }
 
         public StudentModel(int id, string name, int credits)
@@ -15,12 +17,12 @@ namespace CIS3285_Unit4_StudentMVC_2024.Models
             Name = name;
             Credits = credits;
         }
+
         public StudentModel()
         {
             Id = -1;
-            Name = "none";
-            Credits = -1;
+            Name = string.Empty;
+            Credits = 0;
         }
     }
-
 }

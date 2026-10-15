@@ -1,9 +1,10 @@
-﻿namespace CIS3285_Unit4_StudentMVC_2024.Models
+namespace CIS3285_Unit4_StudentMVC_2024.Models
 {
+    // Common contract for both real StudentModel objects and NullStudent.
     public interface IStudentInterface
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int Credits { get; set; }
+        int Id { get; set; }
+        string Name { get; set; }
+        int Credits { get; set; }
     }
 }

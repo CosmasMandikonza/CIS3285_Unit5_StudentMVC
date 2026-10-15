@@ -1,19 +1,18 @@
-﻿namespace CIS3285_Unit4_StudentMVC_2024.Models
+namespace CIS3285_Unit4_StudentMVC_2024.Models
 {
     public class StudentRepository : IStudentCRUDInterface
     {
-        static List<IStudentInterface> myStudents = new List<IStudentInterface>();
+        private static readonly List<IStudentInterface> myStudents = new();
 
         public StudentRepository()
         {
             if (myStudents.Count == 0)
             {
-                // if list is empty, initialize it
-                myStudents.Add(new StudentModel(1001, "Tom", 16));
-                myStudents.Add(new StudentModel(1002, "Jen", 8));
-                myStudents.Add(new StudentModel(1003, "Sabah", 16));
+                // Sample data for this Unit 5 implementation.
+                myStudents.Add(new StudentModel(1001, "Cosmas", 16));
+                myStudents.Add(new StudentModel(1002, "Alex", 12));
+                myStudents.Add(new StudentModel(1003, "Jordan", 8));
             }
-
         }
 
         public List<IStudentInterface> getAllStudent()
@@ -21,34 +20,13 @@
             return myStudents;
         }
 
-
         public IStudentInterface getStudentById(int id)
         {
-            //Console.WriteLine("Getting student with id = " + id);
-            //return myStudents.Find(s => s.Id == id);
-            foreach (IStudentInterface student in myStudents)
-            {
-                if (student.Id == id)
-                {
-                    return (student);
-                }
-            }
-            // if you can't find the correct student return the first one
-            return (new NullStudent());
+            IStudentInterface? student = myStudents.Find(student => student.Id == id);
+
+            // Null Object Pattern: never return null when a student is not found.
+            return student ?? new NullStudent();
         }
-
-
-
-        public IStudentInterface getOneStudent(int index)
-        {
-            return (myStudents[index]);
-        }
-/*        private IStudentInterface nullStudent()
-        {
-            // create a null student
-            IStudentInterface nullStudent = new NullStudent(-1, "Null Student", -999);
-            return nullStudent;
-        }*/
 
         public void AddStudent(IStudentInterface newStudent)
         {
@@ -57,18 +35,23 @@
 
         public void DeleteStudent(int studentId)
         {
-            // search the list for the student that matches the student ID
-            // DEBT --- Handle case when student id not found and index is -1
-            int index = myStudents.FindIndex(student => (student.Id == studentId));
-            myStudents.RemoveAt(index);
+            int index = myStudents.FindIndex(student => student.Id == studentId);
+
+            // FindIndex returns -1 when there is no match.
+            if (index >= 0)
+            {
+                myStudents.RemoveAt(index);
+            }
         }
 
         public void UpdateStudent(int studentId, IStudentInterface updatedStudent)
         {
-            // search the list for the student that matches the student ID
-            // DEBT --- Handle case when student id not found and index is -1
-            int index = myStudents.FindIndex(student => (student.Id == studentId));
-            myStudents[index] = updatedStudent;
+            int index = myStudents.FindIndex(student => student.Id == studentId);
+
+            if (index >= 0)
+            {
+                myStudents[index] = updatedStudent;
+            }
         }
     }
 }
